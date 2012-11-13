@@ -1,0 +1,40 @@
+﻿USE [Battery110]
+GO
+/****** Object:  StoredProcedure [dbo].[Login]    Script Date: 11/12/2012 16:58:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Dxb>
+-- Create date: <2012,11,12>
+-- Description:	<Description,,登录，清理过期处理中数据>
+-- =============================================
+Create PROCEDURE [dbo].[Login] 
+	-- Add the parameters for the stored procedure here
+	@Mac varchar(20),@LogId bigint=0 output,@Ip varchar(20)='0.0.0.0' output, @Port int=8888 output
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	declare @count int = 0
+	select @count = COUNT(*) from dbo.ServerSetup where ServerMac = @Mac and state>-1
+	if(@count > 0)
+	begin
+		select @Ip= IP,@Port= Port from dbo.ServerSetup where ServerMac = @Mac
+		update ServerSetup set state = 1 where ServerMac = @Mac
+	end
+	else
+	begin
+		insert ServerSetup values (@Mac,@Ip,@Port,0)
+	end
+	insert into ServerLog values (@Mac,@Ip,@Port,getdate(),null)
+	select @LogId = Scope_Identity() 
+END
+
+-Eg----------------------------------------------------
+--declare @Mac varchar(20) = 'F0-4D-A2-F3-57-27',@Ip varchar(20),@Port int,@LogId bigint
+--exec dbo.Login @Mac,@LogId output,@Ip output ,@Port output
+--select @Mac , @LogId , @Ip ,@Port 
+------------------------------------------------------
