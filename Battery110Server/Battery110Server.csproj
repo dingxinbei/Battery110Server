@@ -76,6 +76,10 @@
       <Project>{7BC73C0C-0A89-4986-B61C-C16C7E36550D}</Project>
       <Name>Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DBHelp\DBHelp.csproj">
+      <Project>{16A14F52-A577-49A3-B1A4-E8687827DDC5}</Project>
+      <Name>DBHelp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="BTServer.cs" />
     <Compile Include="Data.cs" />
+    <Compile Include="Packet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

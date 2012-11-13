@@ -69,5 +69,15 @@ namespace DXBStudio
             catch { }//tsbStatus.Text = "数据库连接失败！"; }
             return 0;
         }
+
+        public static void LogPacket(byte[] bb, long LogId)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public static DataTable GetTerminalsSetup()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

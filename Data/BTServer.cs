@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Net.Sockets;
+using System.Net;
+using Data;
 
 namespace DXBStudio
 {
@@ -52,21 +54,22 @@ namespace DXBStudio
         
         public void Open()
         {
-            TcpClient tc = new TcpClient(Ip,Port);
-            while (true)
+            //TcpClient tc = new TcpClient(Ip,Port);
+            IPAddress ipAd ;
+            if (IPAddress.TryParse(Ip, out ipAd))
             {
-                try
+                TcpListener tl = new TcpListener(ipAd, Port);
+                tl.Start();
+                while (true)
                 {
-                    NetworkStream ns = tc.GetStream();
-                    if (ns.ReadByte() > DXBStudio.Packet.minLen)
-                    {
-
-                    }
+                    TcpClient tc = tl.AcceptTcpClient();
+                    Client c = new Client(tc,LogId);
+                    System.Threading.Thread th = new System.Threading.Thread(new System.Threading.ThreadStart(c.AsynDo));
+                    th.Start();
                 }
-                catch { break; }
             }
-            tc.Close();
-            _state = -1;//监听状态失效 
+            else
+                throw new Exception("String isnot IpAddress ");
         }
     }
 }

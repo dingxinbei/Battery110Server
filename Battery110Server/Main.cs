@@ -42,5 +42,15 @@ namespace Battery110Server
             }
         }
 
+        private void bDatabaseReset_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void bActive_Click(object sender, EventArgs e)
+        {
+            
+        }
+
     }
 }

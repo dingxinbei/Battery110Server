@@ -381,6 +381,7 @@
             this.bActive.TabIndex = 6;
             this.bActive.Text = "激  活";
             this.bActive.UseVisualStyleBackColor = true;
+            this.bActive.Click += new System.EventHandler(this.bActive_Click);
             // 
             // tbDbUser
             // 
@@ -455,6 +456,7 @@
             this.bDatabaseReset.TabIndex = 6;
             this.bDatabaseReset.Text = "重  置";
             this.bDatabaseReset.UseVisualStyleBackColor = true;
+            this.bDatabaseReset.Click += new System.EventHandler(this.bDatabaseReset_Click);
             // 
             // pbDatabase
             // 
