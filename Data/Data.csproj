@@ -37,6 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BTServer.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="CRC.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

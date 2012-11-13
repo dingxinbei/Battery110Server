@@ -22,11 +22,24 @@ namespace DXBStudio
             NetworkStream ns = tc.GetStream();
             try
             {
-                Packet p = new Packet(ns, LogId);
+                Packet p = new Packet(tc,ns, LogId);
+                ns.Close();
+            }
+            catch { ns.Close(); }
+                        
+        }
+
+        public void Close()
+        {
+            try
+            {
+                tc.Close();
             }
             catch { }
-            ns.Close();
-            tc.Close();
+        }
+        ~Client()
+        {
+            Close();
         }
     }
 }

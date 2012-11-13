@@ -45,8 +45,8 @@ namespace DXBStudio
                     cmd.Connection = sc;
                     cmd.Parameters.Add("@Mac", System.Data.SqlDbType.VarChar);
                     cmd.Parameters.Add("@LogId", System.Data.SqlDbType.BigInt);
-                    cmd.Parameters.Add("@Ip", System.Data.SqlDbType.BigInt);
-                    cmd.Parameters.Add("@Port", System.Data.SqlDbType.BigInt);
+                    cmd.Parameters.Add("@Ip", System.Data.SqlDbType.VarChar);
+                    cmd.Parameters.Add("@Port", System.Data.SqlDbType.Int);
                     cmd.Parameters["@Ip"].Direction = ParameterDirection.Output;
                     cmd.Parameters["@Port"].Direction = ParameterDirection.Output;
                     cmd.Parameters["@LogId"].Direction = ParameterDirection.Output;
@@ -73,11 +73,71 @@ namespace DXBStudio
         public static void LogPacket(byte[] bb, long LogId)
         {
             //throw new NotImplementedException();
+
         }
 
-        public static DataTable GetTerminalsSetup()
+        public static DataTable GetTerminalsSetup(string sMac)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            DataTable dt = new DataTable();
+            try
+            {
+                using (System.Data.SqlClient.SqlConnection sc = DBHelp.CreateSQLConnect())
+                {
+                    sc.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand();
+                    cmd.Connection = sc;
+                    cmd.CommandText = "select * from dbo.TerminalSetupInfo where [state]>=0 and inserver = '"+sMac+"'";
+                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                    sda.Fill(dt);
+                    sc.Close();
+                }
+            }
+            catch { }//tsbStatus.Text = "数据库连接失败！"; }
+            return dt;
+        }
+
+        public static void CloseServer(long LogId)
+        {
+            //throw new NotImplementedException();
+            try
+            {
+                using (System.Data.SqlClient.SqlConnection sc = DBHelp.CreateSQLConnect())
+                {
+                    sc.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand();
+                    cmd.Connection = sc;
+                    cmd.CommandText = "update dbo.ServerLog set LeaveTime = GETDATE() where bID="+LogId.ToString();
+                    cmd.ExecuteNonQuery();
+                    sc.Close();
+                }
+            }
+            catch { }//tsbStatus.Text = "数据库连接失败！"; }
+        }
+
+        public static void SaveServerConfing(string smac,string _sIp, int _port)
+        {
+            //throw new NotImplementedException();
+            try
+            {
+                using (System.Data.SqlClient.SqlConnection sc = DBHelp.CreateSQLConnect())
+                {
+                    sc.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Connection = sc;
+                    cmd.CommandText = "SaveServerConfig";
+                    cmd.Parameters.Add("@Mac", System.Data.SqlDbType.VarChar);
+                    cmd.Parameters.Add("@Ip", System.Data.SqlDbType.VarChar);
+                    cmd.Parameters.Add("@Port", System.Data.SqlDbType.Int);
+                    cmd.Parameters["@Mac"].Value = smac;
+                    cmd.Parameters["@Ip"].Value = _sIp;
+                    cmd.Parameters["@Port"].Value = _port;
+                    cmd.ExecuteNonQuery();
+                    sc.Close();
+                }
+            }
+            catch { }//tsbStatus.Text = "数据库连接失败！"; }
         }
     }
 }

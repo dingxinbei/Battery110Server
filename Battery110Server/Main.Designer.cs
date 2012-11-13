@@ -65,6 +65,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.bDatabaseReset = new System.Windows.Forms.Button();
             this.pbDatabase = new System.Windows.Forms.ProgressBar();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -78,6 +81,12 @@
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -100,14 +109,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.lConNums);
-            this.groupBox1.Controls.Add(this.lRegNums);
-            this.groupBox1.Controls.Add(this.bDataLog);
-            this.groupBox1.Controls.Add(this.bSend);
-            this.groupBox1.Controls.Add(this.bCanSet);
-            this.groupBox1.Controls.Add(this.dataGridView1);
-            this.groupBox1.Controls.Add(this.lCnnectNums);
-            this.groupBox1.Controls.Add(this.lTermnalNums);
+            this.groupBox1.Controls.Add(this.splitContainer4);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -119,7 +121,7 @@
             // lConNums
             // 
             this.lConNums.AutoSize = true;
-            this.lConNums.Location = new System.Drawing.Point(14, 90);
+            this.lConNums.Location = new System.Drawing.Point(11, 87);
             this.lConNums.Name = "lConNums";
             this.lConNums.Size = new System.Drawing.Size(11, 12);
             this.lConNums.TabIndex = 5;
@@ -128,7 +130,7 @@
             // lRegNums
             // 
             this.lRegNums.AutoSize = true;
-            this.lRegNums.Location = new System.Drawing.Point(14, 44);
+            this.lRegNums.Location = new System.Drawing.Point(11, 41);
             this.lRegNums.Name = "lRegNums";
             this.lRegNums.Size = new System.Drawing.Size(11, 12);
             this.lRegNums.TabIndex = 4;
@@ -136,7 +138,7 @@
             // 
             // bDataLog
             // 
-            this.bDataLog.Location = new System.Drawing.Point(604, 101);
+            this.bDataLog.Location = new System.Drawing.Point(12, 209);
             this.bDataLog.Name = "bDataLog";
             this.bDataLog.Size = new System.Drawing.Size(75, 23);
             this.bDataLog.TabIndex = 3;
@@ -145,7 +147,7 @@
             // 
             // bSend
             // 
-            this.bSend.Location = new System.Drawing.Point(604, 61);
+            this.bSend.Location = new System.Drawing.Point(12, 169);
             this.bSend.Name = "bSend";
             this.bSend.Size = new System.Drawing.Size(75, 23);
             this.bSend.TabIndex = 3;
@@ -155,7 +157,7 @@
             // 
             // bCanSet
             // 
-            this.bCanSet.Location = new System.Drawing.Point(604, 21);
+            this.bCanSet.Location = new System.Drawing.Point(12, 129);
             this.bCanSet.Name = "bCanSet";
             this.bCanSet.Size = new System.Drawing.Size(75, 23);
             this.bCanSet.TabIndex = 3;
@@ -166,21 +168,21 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
             this.Column2,
             this.Column3,
             this.Column4});
-            this.dataGridView1.Location = new System.Drawing.Point(121, 12);
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowHeadersWidth = 18;
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(453, 239);
+            this.dataGridView1.Size = new System.Drawing.Size(438, 237);
             this.dataGridView1.TabIndex = 2;
+            this.dataGridView1.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseClick);
             // 
             // Column1
             // 
@@ -211,7 +213,7 @@
             // lCnnectNums
             // 
             this.lCnnectNums.AutoSize = true;
-            this.lCnnectNums.Location = new System.Drawing.Point(13, 67);
+            this.lCnnectNums.Location = new System.Drawing.Point(10, 64);
             this.lCnnectNums.Name = "lCnnectNums";
             this.lCnnectNums.Size = new System.Drawing.Size(77, 12);
             this.lCnnectNums.TabIndex = 1;
@@ -220,7 +222,7 @@
             // lTermnalNums
             // 
             this.lTermnalNums.AutoSize = true;
-            this.lTermnalNums.Location = new System.Drawing.Point(13, 21);
+            this.lTermnalNums.Location = new System.Drawing.Point(10, 18);
             this.lTermnalNums.Name = "lTermnalNums";
             this.lTermnalNums.Size = new System.Drawing.Size(77, 12);
             this.lTermnalNums.TabIndex = 0;
@@ -279,6 +281,7 @@
             // 
             // tbIpAddress
             // 
+            this.tbIpAddress.Enabled = false;
             this.tbIpAddress.Location = new System.Drawing.Point(121, 27);
             this.tbIpAddress.Name = "tbIpAddress";
             this.tbIpAddress.Size = new System.Drawing.Size(176, 21);
@@ -372,6 +375,7 @@
             this.checkBox2.TabIndex = 5;
             this.checkBox2.Text = "默认绑定所有IP";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // bActive
             // 
@@ -379,7 +383,7 @@
             this.bActive.Name = "bActive";
             this.bActive.Size = new System.Drawing.Size(75, 23);
             this.bActive.TabIndex = 6;
-            this.bActive.Text = "激  活";
+            this.bActive.Text = "重  置";
             this.bActive.UseVisualStyleBackColor = true;
             this.bActive.Click += new System.EventHandler(this.bActive_Click);
             // 
@@ -465,6 +469,54 @@
             this.pbDatabase.Size = new System.Drawing.Size(118, 23);
             this.pbDatabase.TabIndex = 4;
             // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(3, 17);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.splitContainer5);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.propertyGrid1);
+            this.splitContainer4.Size = new System.Drawing.Size(705, 237);
+            this.splitContainer4.SplitterDistance = 554;
+            this.splitContainer4.TabIndex = 6;
+            // 
+            // propertyGrid1
+            // 
+            this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid1.Location = new System.Drawing.Point(0, 0);
+            this.propertyGrid1.Name = "propertyGrid1";
+            this.propertyGrid1.Size = new System.Drawing.Size(147, 237);
+            this.propertyGrid1.TabIndex = 0;
+            // 
+            // splitContainer5
+            // 
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer5.Name = "splitContainer5";
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.lTermnalNums);
+            this.splitContainer5.Panel1.Controls.Add(this.bSend);
+            this.splitContainer5.Panel1.Controls.Add(this.lConNums);
+            this.splitContainer5.Panel1.Controls.Add(this.bCanSet);
+            this.splitContainer5.Panel1.Controls.Add(this.lCnnectNums);
+            this.splitContainer5.Panel1.Controls.Add(this.bDataLog);
+            this.splitContainer5.Panel1.Controls.Add(this.lRegNums);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.dataGridView1);
+            this.splitContainer5.Size = new System.Drawing.Size(554, 237);
+            this.splitContainer5.SplitterDistance = 112;
+            this.splitContainer5.TabIndex = 6;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -478,7 +530,6 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -491,6 +542,13 @@
             this.splitContainer3.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            this.splitContainer4.ResumeLayout(false);
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel1.PerformLayout();
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            this.splitContainer5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -534,6 +592,9 @@
         private System.Windows.Forms.TextBox tbDatabaseAddress;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.PropertyGrid propertyGrid1;
     }
 }
 

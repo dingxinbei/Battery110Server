@@ -1,5 +1,6 @@
 ﻿USE [Battery110]
 GO
+--------------------------------1 ---------------------------------------------------
 /****** Object:  StoredProcedure [dbo].[Login]    Script Date: 11/12/2012 16:58:19 ******/
 SET ANSI_NULLS ON
 GO
@@ -38,3 +39,35 @@ END
 --exec dbo.Login @Mac,@LogId output,@Ip output ,@Port output
 --select @Mac , @LogId , @Ip ,@Port 
 ------------------------------------------------------
+
+
+------------------------------------2---------------------------------------------------------
+-- ================================================
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,DXB>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[SaveServerConfig]
+	-- Add the parameters for the stored procedure here
+	@Mac varchar(20),@Ip varchar(20),@Port int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	declare @re int
+	select @re = COUNT(*) from dbo.ServerSetup where ServerMac = @Mac
+	if(@re > 0)
+	begin
+		update dbo.ServerSetup set IP = @Ip , Port = @Port where ServerMac = @Mac
+	end 
+	else
+		insert into dbo.ServerSetup values (@Mac , @Ip , @Port , 1 )	
+    
+END
+GO
