@@ -71,3 +71,29 @@ BEGIN
     
 END
 GO
+------------------------------3----------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,DXB>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[LoginData]
+	-- Add the parameters for the stored procedure here
+	--理论上是不能超过1024的
+	@data varbinary(1024),@LogId bigint,@Type bit=0,
+	@No int,@TerminalNo binary(4),@Command binary(2),@infoLen int,@infodata varbinary(1024)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	--状态，-1，可转移的数据。0，新数据，1处理中的数据，2处理过的数据，3错误数据……
+	SET NOCOUNT ON;
+	insert into dbo.LogData values (@data,GETDATE(),0,@Type,@LogId);
+	declare @id bigint = SCOPE_IDENTITY() ;
+	insert into dbo.PackData values (@id,@No,@TerminalNo,@Command,@infoLen,@infodata,GETDATE())
+END
+GO

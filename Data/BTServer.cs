@@ -15,7 +15,7 @@ namespace DXBStudio
             get { return _logID; }
         }
         private static string _mac;
-        public string Mac
+        public static string Mac
         {
             get
             {

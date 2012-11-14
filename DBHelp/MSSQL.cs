@@ -12,8 +12,8 @@ namespace DXBStudio
         public static string sDbPort = "3200";
         public static string sDbUser = "sa";
         public static string sDbPass = "sasa";
-        private const string sConnectDB = @"Data Source="+sDbAddress+","+sDbPort+";Initial Catalog=Battery110;User ID="+sDbUser+";Password="+sDbPass;
-        private const string sRecvDataDb = @"Data Source=" + sDbAddress + "," + sDbPort + ";Initial Catalog=BatteryLog;User ID=" + sDbUser + ";Password=" + sDbPass;
+        private static string sConnectDB = @"Data Source="+sDbAddress+","+sDbPort+";Initial Catalog=Battery110;User ID="+sDbUser+";Password="+sDbPass;
+        private static string sRecvDataDb = @"Data Source=" + sDbAddress + "," + sDbPort + ";Initial Catalog=BatteryLog;User ID=" + sDbUser + ";Password=" + sDbPass;
         /// <summary>
         /// 创建连接
         /// </summary>
@@ -23,7 +23,11 @@ namespace DXBStudio
             string sc = sConnectDB;
             return new SqlConnection(sc);
         }
-
+        public static SqlConnection CreateLogConnect()
+        {
+            string sc = sRecvDataDb;
+            return new SqlConnection(sc);
+        }
         /// <summary>
         /// 输入Mac IP Port
         /// </summary>
@@ -70,11 +74,7 @@ namespace DXBStudio
             return 0;
         }
 
-        public static void LogPacket(byte[] bb, long LogId)
-        {
-            //throw new NotImplementedException();
-
-        }
+        
 
         public static DataTable GetTerminalsSetup(string sMac)
         {
@@ -138,6 +138,89 @@ namespace DXBStudio
                 }
             }
             catch { }//tsbStatus.Text = "数据库连接失败！"; }
+        }
+
+        public static void LogPacket(byte[] bb, int iNo, byte[] bTerminalNo, byte[] bCommand, int dataLen, int i, long LogId)
+        {
+            //throw new NotImplementedException();
+            try
+            {
+                using (System.Data.SqlClient.SqlConnection sc = DBHelp.CreateLogConnect())
+                {
+                    sc.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand();
+                    cmd.Connection = sc;
+                    cmd.CommandText = "LoginData";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@data", SqlDbType.VarBinary);
+                    cmd.Parameters.Add("@No", SqlDbType.Int);
+                    cmd.Parameters.Add("@Terminal", SqlDbType.Binary);
+                    cmd.Parameters.Add("@Command", SqlDbType.Binary);
+                    cmd.Parameters.Add("@infoLen", SqlDbType.Int);
+                    cmd.Parameters.Add("@infodata", SqlDbType.Binary);
+                    cmd.Parameters.Add("@LogId", SqlDbType.BigInt);
+                    cmd.Parameters["@data"].Value = bb;
+                    cmd.Parameters["@No"].Value = iNo;
+                    cmd.Parameters["@TerminalNo"].Value = bTerminalNo;
+                    cmd.Parameters["@Command"].Value = bCommand;
+                    cmd.Parameters["@infoLen"].Value = dataLen;
+                    byte[] bbb = new byte[dataLen];
+                    bb.CopyTo(bbb,i);
+                    cmd.Parameters["@infodata"].Value = bbb;
+                    cmd.Parameters["@LogId"].Value = LogId;
+                    cmd.ExecuteNonQuery();
+                    sc.Close();
+                }
+            }
+            catch { }
+        }
+        /// <summary>
+        /// 终端注册
+        /// </summary>
+        /// <param name="bTerminalNo"></param>
+        /// <param name="sphone"></param>
+        /// <param name="bType"></param>
+        /// <param name="sversion"></param>
+        /// <param name="bReRegister"></param>
+        /// <returns></returns>
+        public static bool Register(string mac,out byte[] bTerminalNo, string sphone, bool bType, string sversion,out bool bReRegister)
+        {
+            bTerminalNo = new byte[4] ;bReRegister = false;
+            try
+            {
+                using (System.Data.SqlClient.SqlConnection sc = DBHelp.CreateSQLConnect())
+                {
+                    sc.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand();
+                    cmd.Connection = sc;
+                    cmd.CommandText = "Register";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Phone", SqlDbType.VarChar);
+                    cmd.Parameters.Add("@Type", SqlDbType.Bit);
+                    cmd.Parameters.Add("@Version", SqlDbType.VarChar);
+                    cmd.Parameters["@Phone"].Value = sphone;
+                    cmd.Parameters["@Type"].Value = bType;
+                    cmd.Parameters["@Version"].Value = sversion;
+                    cmd.Parameters.Add("@mac", SqlDbType.VarChar);
+                    cmd.Parameters["@mac"].Value = mac;
+
+                    cmd.Parameters.Add("@TerminalNo", SqlDbType.Binary);
+                    cmd.Parameters.Add("@ReReg", SqlDbType.Bit);
+                    cmd.Parameters["@TerminalNo"].Direction = ParameterDirection.Output;
+                    cmd.Parameters["@ReReg"].Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+                    sc.Close();
+
+                    bTerminalNo = (byte[])cmd.Parameters["@TerminalNo"].Value;
+                    bReRegister = (bool)cmd.Parameters["@ReReg"].Value;
+
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
         }
     }
 }

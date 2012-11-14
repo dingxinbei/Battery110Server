@@ -39,21 +39,12 @@ namespace Battery110Server
 
                 pbDatabase.Style = ProgressBarStyle.Continuous;
 
-                DXBStudio.Ternimal.InitData(bt.Mac);
+                DXBStudio.Terminal.InitData(DXBStudio.BTServer.Mac);
                 ////////////////////////////////////////////
-                int i =0;
-                foreach (DXBStudio.Ternimal t in DXBStudio.Ternimal.lTernimals)
+                //int i =0;
+                foreach (DXBStudio.Terminal t in DXBStudio.Terminal.lTerminals)
                 {
-                    dataGridView1.Rows.Add();
-                    dataGridView1.Rows[dataGridView1.Rows.Count - 1].DefaultCellStyle.BackColor = Color.Yellow;
-                    dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Value = i + 1;
-                    dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[1].Value = t.Id;
-                    dataGridView1.Rows[dataGridView1.Rows.Count - 1].Tag = t;
-                    t.RowIndex = dataGridView1.Rows[dataGridView1.Rows.Count - 1].Index;
-                    //初始化无间隔发送时间
-                    //dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[2].Value = 
-                    t.StateChange+=new DXBStudio.Ternimal._StateChange(t_StateChange);
-                    t.RecvData += new DXBStudio.Ternimal._RecvData(t_RecvData);
+                    AppRow(dataGridView1,t);
                 }
 
                 bt.Open();
@@ -62,25 +53,42 @@ namespace Battery110Server
                 MessageBox.Show(e.Message);
             }
         }
-
-        void t_RecvData(DXBStudio.Ternimal sender)
+        
+        public void AppRow(DataGridView dataGridView1, DXBStudio.Terminal t)
         {
-            //throw new NotImplementedException();
+            
+            dataGridView1.Rows.Add();
+            int i = dataGridView1.Rows.Count;
+            dataGridView1.Rows[dataGridView1.Rows.Count - 1].DefaultCellStyle.BackColor = Color.Yellow;
+            dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Value = i ;
+            dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[1].Value = t.Id;
+            dataGridView1.Rows[dataGridView1.Rows.Count - 1].Tag = t;
+            t.RowIndex = dataGridView1.Rows[i - 1].Index;
+            //初始化无间隔发送时间
+            //dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[2].Value = 
+            t.StateChange += new DXBStudio.Terminal._StateChange(t_StateChange);
+            t.RecvData += new DXBStudio.Terminal._RecvData(t_RecvData);
+        }
+
+        void t_RecvData(DXBStudio.Terminal sender)
+        {
+            if (sender.State == DXBStudio.Terminal.ConnectState.Normal)
+                dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Green;
             if (sender.LastRecv != null)
             {
                 dataGridView1.Rows[sender.RowIndex].Cells[2].Value = (sender.NowRecv - sender.LastRecv).Milliseconds;
             }
         }
 
-        void t_StateChange(DXBStudio.Ternimal sender,DXBStudio.Ternimal.ConnectState cs)
+        void t_StateChange(DXBStudio.Terminal sender,DXBStudio.Terminal.ConnectState cs)
         {
             //throw new NotImplementedException();
-            if (cs == DXBStudio.Ternimal.ConnectState.Normal)
+            if (cs == DXBStudio.Terminal.ConnectState.Normal)
             {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Green;
                 return;
             }
-            if (cs == DXBStudio.Ternimal.ConnectState.Disconnect)
+            if (cs == DXBStudio.Terminal.ConnectState.Disconnect)
             {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Yellow;
                 return;
@@ -140,6 +148,21 @@ namespace Battery110Server
             {
                 tbIpAddress.Enabled = true;
                 tbIpAddress.Focus();
+            }
+        }
+        /// <summary>
+        /// 5'' 检查一次队列，看是否有新增的 Terminal。。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            foreach (DXBStudio.Terminal t in DXBStudio.Terminal.lTerminals)
+            {
+                if (t.RowIndex == -1)
+                {
+                    AppRow(dataGridView1, t);
+                }
             }
         }
 

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Network", "Network\Network.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{7BC73C0C-0A89-4986-B61C-C16C7E36550D}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "UMLBatteryServer", "UMLBatteryServer\UMLBatteryServer.modelproj", "{0BB086FD-F622-477C-9858-7126923AD55A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,16 @@ Global
 		{7BC73C0C-0A89-4986-B61C-C16C7E36550D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7BC73C0C-0A89-4986-B61C-C16C7E36550D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7BC73C0C-0A89-4986-B61C-C16C7E36550D}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0BB086FD-F622-477C-9858-7126923AD55A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

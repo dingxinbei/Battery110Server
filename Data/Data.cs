@@ -6,21 +6,21 @@ using System.Data;
 
 namespace DXBStudio
 {
-    public class Ternimal
+    public class Terminal
     {
         /// <summary>
         /// ////////////////////////////////////////////
         /// </summary>
         /// <param name="iState"></param>
-        public delegate void _StateChange(Ternimal sender,ConnectState cs);
+        public delegate void _StateChange(Terminal sender,ConnectState cs);
         public event _StateChange StateChange;
 
-        public delegate void _RecvData(Ternimal sender);
+        public delegate void _RecvData(Terminal sender);
         public event _RecvData RecvData;
         /// <summary>
         /// /////////////////////////////////////////////////
         /// </summary>
-        public static List<Ternimal> lTernimals = new List<Ternimal>();
+        public static List<Terminal> lTerminals = new List<Terminal>();
         private uint _Id;
         public  int RowIndex = -1;
         
@@ -87,7 +87,34 @@ namespace DXBStudio
             tc = _tc;
             _state = ConnectState.Normal;
         }
-        public Ternimal(byte[] bId, bool _carNetType, string _romVersion, string _Phone, int _gprsperiod, Int64 _maker, DateTime regTime)
+        //public Terminal( bool _carNetType, string _romVersion, string _Phone)
+        //{
+        //    //_Id = System.BitConverter.ToUInt32(bId, 0);
+        //    _CarNetType = _carNetType;
+        //    _romversion = _romVersion;
+        //    _phone = _Phone;
+        //    //获取分配的ID，或者已存在的ID
+
+
+
+        //    //_gprsPeriod = _gprsperiod;
+        //    //_Maker = _maker;
+        //    //_RegTime = regTime;
+        //    _state = ConnectState.Disconnect;//数据库获取,未链接的
+        //    th = new System.Threading.Thread(new System.Threading.ThreadStart(CheckConnect));
+        //    th.Start();
+        //}
+        /// <summary>
+        /// 从数据库获取出来的
+        /// </summary>
+        /// <param name="bId"></param>
+        /// <param name="_carNetType"></param>
+        /// <param name="_romVersion"></param>
+        /// <param name="_Phone"></param>
+        /// <param name="_gprsperiod"></param>
+        /// <param name="_maker"></param>
+        /// <param name="regTime"></param>
+        public Terminal(byte[] bId, bool _carNetType, string _romVersion, string _Phone, int _gprsperiod, Int64 _maker, DateTime regTime)
         {
             _Id = System.BitConverter.ToUInt32(bId, 0);
             _CarNetType = _carNetType;
@@ -102,22 +129,25 @@ namespace DXBStudio
         }
         public static void InitData(string sMac)
         {
-            lTernimals.Clear();
+            lTerminals.Clear();
             DataTable dt = DBHelp.GetTerminalsSetup(sMac);
             foreach (DataRow dr in dt.Rows)
             {
-                lTernimals.Add(new Ternimal((byte[])dr[1], (bool)dr[2], (string)dr[3], (string)dr[4], (int)dr[5], (Int64)dr[6], (DateTime)dr[7]));
+                lTerminals.Add(new Terminal((byte[])dr[1], (bool)dr[2], (string)dr[3], (string)dr[4], (int)dr[5], (Int64)dr[6], (DateTime)dr[7]));
             }
         }
         public static void ReleaseALL()
         {
-            foreach (Ternimal t in lTernimals)
+            foreach (Terminal t in lTerminals)
             {
                 t.Close();
             }
-            lTernimals.Clear();
+            lTerminals.Clear();
         }
         private bool bCheckConnect = true;
+        /// <summary>
+        /// 检测数组的数量和是否关联，网络是否断开
+        /// </summary>
         private void CheckConnect()
         {
             while (bCheckConnect)
