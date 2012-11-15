@@ -8,6 +8,14 @@ namespace DXBStudio
     public class Packet
     {
         public const int minLen = 15;
+        public const int maxLen = 1025;
+        public enum HandState : byte
+        {
+            //状态若为00，表示连接正常。若为02，则表示终端未注册。若为03，则表示连接已断开。
+            Normal = 0x00,
+            UnRegister = 0x02,
+            DisConnect = 0x03
+        }
         public static byte[] bBegin = {0x78,0x78 };
         // 《255
         private byte bNo = 1;
@@ -290,6 +298,50 @@ namespace DXBStudio
             bb[i++] = bEnd[1];
 
             return bb;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="TerminalNo"></param>
+        /// <param name="bNo">需要返回，应该是引用，如果标准的话</param>
+        /// <returns></returns>
+        public static byte[] MakeTerminalHandPacket(uint TerminalNo,byte bNo)
+        {
+            /////////////////////////////////序号长度////////////////////////////////信息长度//
+            byte[] bb = new byte[minLen + 2];
+            /////////////////////
+            int i = 0;
+            bBegin.CopyTo(bb, i);
+            i = i + bBegin.Length;
+            //////////////////////
+            if (bNo == 255)
+                bNo = 1;
+            bb[i++] = bNo++;
+            ////////////////////
+            BitConverter.GetBytes(TerminalNo).CopyTo(bb, i);
+            i = i + sizeof(uint);
+            /////////////////////////
+            System.BitConverter.GetBytes(((ushort)Commands.Hand)).CopyTo(bb, i);
+            i = i + sizeof(ushort);
+            ///////////////////////////
+            bb[i++] = 0x00; bb[i++] = 0x02;//信息长度为2
+            ///////////////////////////关键字为 55 AA
+            bb[i++] = 0x55; bb[i++] = 0xAA;
+            //协议体中从“信息序列号”到“信息内容”（包括“信息序列号”、“ 信息内容”）这部分数据的 CRC-ITU 值。
+            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 2 - bBegin.Length - bEnd.Length);
+            bb[i++] = CRC.CRC16.Lo(ucrc);
+            bb[i++] = CRC.CRC16.Hi(ucrc);
+            ////////////////////////////////////////////
+            bb[i++] = bEnd[0];
+            bb[i++] = bEnd[1];
+
+            return bb;
+
+        }
+
+        public static byte[] MakeTerminalRegisterPacket(string _phone, int p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

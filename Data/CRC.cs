@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DXBStudio
 {
-    class CRC
+    public class CRC
     {
         public class CRC16
         {
