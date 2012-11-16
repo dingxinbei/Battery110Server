@@ -36,6 +36,11 @@ namespace Terminal
             tbRegId.Text = t.Phone;
             tbRegNo.Text = t.TerminalNo.ToString();
 
+            cbNetType.SelectedIndex = t.NetType;
+            maskedTextBox1.Text = t.Version;
+
+            
+
             t.ConnectState += new Terminal._ConnectState(t_ConnectState);
 
             t.Message += new Terminal._Message(t_Message);
@@ -67,6 +72,7 @@ namespace Terminal
 
         private void bReg_Click(object sender, EventArgs e)
         {
+            t.Version = maskedTextBox1.Text;
             if (t.ConState == Terminal.State.Connect)
             {
                 tbRegId.Text = t.Phone;
@@ -93,6 +99,11 @@ namespace Terminal
             }
             else
                 MessageBox.Show("连接状态不适合发送，稍等 或 重启。");
+        }
+
+        private void cbNetType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            t.NetType = (byte)cbNetType.SelectedIndex;
         }
     }
 }

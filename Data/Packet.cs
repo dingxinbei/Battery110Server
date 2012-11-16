@@ -339,9 +339,46 @@ namespace DXBStudio
 
         }
 
-        public static byte[] MakeTerminalRegisterPacket(string _phone, int p)
+        public static byte[] MakeTerminalRegisterPacket(string _phone,byte netType,byte[] version, int p)
         {
-            throw new NotImplementedException();
+            /////////////////////////////////序号长度////////////////////////////////信息长度//
+            byte[] bb = new byte[minLen + 12];
+            /////////////////////
+            int i = 0;
+            bBegin.CopyTo(bb, i);
+            i = i + bBegin.Length;
+            //////////////////////
+            //if (bNo == 255)
+            //    bNo = 1;
+            bb[i++] = 1;//bNo++;
+            ////////////////////
+            //BitConverter.GetBytes(TerminalNo).CopyTo(bb, i);
+            //i = i + sizeof(uint);
+            bb[i++] = 0xFF; bb[i++] = 0xFF; bb[i++] = 0xFF; bb[i++] = 0xFF;
+            /////////////////////////
+            System.BitConverter.GetBytes(((ushort)Commands.Register)).CopyTo(bb, i);
+            i = i + sizeof(ushort);
+            ///////////////////////////
+            bb[i++] = 0x00; bb[i++] = 0x0C;//信息长度为12
+            ///////////////////////////Terminal ID^^^^^^^^^^^^^^^
+            ASCIIEncoding.ASCII.GetBytes(_phone).CopyTo(bb, i);
+            i = i + 6;
+            /////////////////////////////网络ID
+            bb[i++] = netType;
+            ////////////////////////////版本信息
+            version.CopyTo(bb, i);
+            i = i + version.Length;
+            ///////////////////////////客户信息  暂时没有
+            bb[i++] = 0x00; bb[i++] = 0x00;
+            //协议体中从“信息序列号”到“信息内容”（包括“信息序列号”、“ 信息内容”）这部分数据的 CRC-ITU 值。
+            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 2 - bBegin.Length - bEnd.Length);
+            bb[i++] = CRC.CRC16.Lo(ucrc);
+            bb[i++] = CRC.CRC16.Hi(ucrc);
+            ////////////////////////////////////////////
+            bb[i++] = bEnd[0];
+            bb[i++] = bEnd[1];
+
+            return bb;
         }
     }
 }

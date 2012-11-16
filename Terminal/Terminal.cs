@@ -19,6 +19,21 @@ namespace Terminal
             get { return _phone; }
             set { _phone = value; }
         }
+        private byte _NetType = 0x00;
+        public byte NetType
+        {
+            get { return _NetType; }
+            set { _NetType = value; }
+        }
+        private byte[] _Version = {0x01,0x02,0x03 };
+        public string Version
+        {
+            get { return BitConverter.ToString(_Version).Replace('-', '.'); }
+            set {
+                string ss = value.Replace(".","");//.Split('.');
+                Encoding.ASCII.GetBytes(ss).CopyTo(_Version,0);
+            }
+        }
         public uint TerminalNo
         {
             get { return _TerminalNo; }
