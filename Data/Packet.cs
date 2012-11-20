@@ -89,14 +89,17 @@ namespace DXBStudio
         private Int64 LogId;
         public Packet(TcpClient tc,NetworkStream ns,Int64 _Logid)
         {   
-            int Len ;
-            //数据超长，不合理
-            if(int.TryParse(ns.Length.ToString(),out Len))
-                return;
-            byte[] bb = new byte[Len];
-            //读取到的数据不合理
-            if (ns.Read(bb, 0, Len) <= minLen)
-                return;
+            int Len =1024;
+            byte[] bb;
+            try
+            {
+                //数据超长，不合理  只要连接 就会有数据，所以不可以关闭 连接
+                bb = new byte[Len];
+                //读取到的数据不合理
+                if ((Len = ns.Read(bb, 0, Len)) <= minLen)
+                    return;
+            }
+            catch { return; }//连接时有流产生，但是没有数据，所以 报错，，不处理
             LogId = _Logid;
             int i = 0;
             
@@ -125,7 +128,7 @@ namespace DXBStudio
                     bCommand[0] = bb[i++];
                     bCommand[1] = bb[i++];
                     //信息内容长度
-                    int dataLen = System.BitConverter.ToInt16(bb, i);
+                    ushort dataLen = System.BitConverter.ToUInt16(bb, i);
                     i = i + 2;//2位
                     /////////////////////////////
                     //根据不同的协议号，返回不同的处理
@@ -137,7 +140,9 @@ namespace DXBStudio
                         default: return;
                     }
                     //录入数据库
-                    DBHelp.LogPacket(bb, iNo,bTerminalNo,bCommand,dataLen,i,LogId);
+                    byte[] bLog = new byte[Len];
+                    System.Array.Copy(bb, bLog, Len);
+                    DBHelp.LogPacket(bLog, iNo,bTerminalNo,bCommand,dataLen,i,LogId);
                 }
                 else
                     throw new Exception("Packet Begin or End is Wrong");
@@ -159,7 +164,7 @@ namespace DXBStudio
             try
             {
                 bool bReRegister = false;
-                string sphone = System.BitConverter.ToString(bb, i, 6).Trim();
+                string sphone = string.Format("{0:d2}{1:d2}{2:d2}{3:d2}{4:d2}{5:d2}", bb[i], bb[i + 1], bb[i + 2], bb[i + 3], bb[i + 4], bb[i + 5]);
                 i = i + 6;
                 bool bType = System.BitConverter.ToBoolean(bb, i++);
                 string sversion = System.BitConverter.ToString(bb, i, 3).Replace('-', '.');
@@ -171,12 +176,10 @@ namespace DXBStudio
                     ns.Flush();
 
                     Terminal t = new Terminal(bTerminalNo, bType, sversion, sphone, 0, 0, DateTime.Now);
-                    Terminal.lTerminals.Add(t);
+                    Terminal.AppTerminal(t);
 
                     return;
                 }
-                ns.Close();
-                tc.Close();
             }
             catch { }
 
@@ -192,7 +195,7 @@ namespace DXBStudio
         {
             //throw new NotImplementedException();
             /////////////////////////////////序号长度////////////////////////////////信息长度//
-            int packLen = minLen + 1 + 5;
+            int packLen = minLen + 5;
             byte[] bb = new byte[packLen];
             /////////////////////
             int i = 0;
@@ -209,14 +212,16 @@ namespace DXBStudio
             System.BitConverter.GetBytes(((ushort)Commands.Register)).CopyTo(bb, i);
             i = i + sizeof(ushort);
             ///////////////////////////
-            bb[i++] = 0x00; bb[i++] = 0x05;//信息长度为5
+            System.BitConverter.GetBytes((UInt16)5).CopyTo(bb, i);
+            //bb[i++] = 0x00; bb[i++] = 0x05;//信息长度为5
+            i = i + 2;
             ///////////////////////////状态 00 02 03
             bb[i++] = State;
             //////////////////////////
             bTerminalNo.CopyTo(bb, i);
             i = i + bTerminalNo.Length;
             //协议体中从“信息序列号”到“信息内容”（包括“信息序列号”、“ 信息内容”）这部分数据的 CRC-ITU 值。
-            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, packLen - bBegin.Length - bEnd.Length  );
+            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, packLen - bBegin.Length - bEnd.Length -2 );
             bb[i++] = CRC.CRC16.Lo(ucrc);
             bb[i++] = CRC.CRC16.Hi(ucrc);
             ////////////////////////////////////////////
@@ -242,13 +247,11 @@ namespace DXBStudio
                     byte[] bb = MakeHandPackage((byte)t.State);
                     ns.Write(bb, 0, bb.Length);
                     ns.Flush();
-                    ns.Close();
                     if (t.State == Terminal.ConnectState.Disconnect)
                     {
                         t.SetTcpClient(tc);
                     }
-                    else
-                        tc.Close();
+                    
                     return;
                 }
             }
@@ -258,8 +261,6 @@ namespace DXBStudio
             byte[] bbb = MakeHandPackage(0x02);
             ns.Write(bbb,0,bbb.Length);
             ns.Flush();
-            ns.Close();
-            tc.Close();
         }
         /// <summary>
         /// 生成握手包
@@ -286,11 +287,13 @@ namespace DXBStudio
             System.BitConverter.GetBytes(((ushort)Commands.Hand)).CopyTo(bb, i);
             i = i + sizeof(ushort);
             ///////////////////////////
-            bb[i++] = 0x00; bb[i++] = 0x01;//信息长度为1
+            System.BitConverter.GetBytes((UInt16)1).CopyTo(bb, i);
+            //bb[i++] = 0x00; bb[i++] = 0x05;//信息长度为1
+            i = i + 2;
             ///////////////////////////状态 00 02 03
             bb[i++] = p;
             //协议体中从“信息序列号”到“信息内容”（包括“信息序列号”、“ 信息内容”）这部分数据的 CRC-ITU 值。
-            ushort ucrc  = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 1 - bBegin.Length - bEnd.Length); 
+            ushort ucrc  = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 1 - bBegin.Length - bEnd.Length - 2 ); 
             bb[i++] = CRC.CRC16.Lo(ucrc);
             bb[i++] = CRC.CRC16.Hi(ucrc);
             ////////////////////////////////////////////
@@ -324,11 +327,13 @@ namespace DXBStudio
             System.BitConverter.GetBytes(((ushort)Commands.Hand)).CopyTo(bb, i);
             i = i + sizeof(ushort);
             ///////////////////////////
-            bb[i++] = 0x00; bb[i++] = 0x02;//信息长度为2
+            System.BitConverter.GetBytes((UInt16)2).CopyTo(bb, i);
+            //bb[i++] = 0x00; bb[i++] = 0x05;//信息长度为2
+            i = i + 2;
             ///////////////////////////关键字为 55 AA
             bb[i++] = 0x55; bb[i++] = 0xAA;
             //协议体中从“信息序列号”到“信息内容”（包括“信息序列号”、“ 信息内容”）这部分数据的 CRC-ITU 值。
-            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 2 - bBegin.Length - bEnd.Length);
+            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 2 - bBegin.Length - bEnd.Length - 2);
             bb[i++] = CRC.CRC16.Lo(ucrc);
             bb[i++] = CRC.CRC16.Hi(ucrc);
             ////////////////////////////////////////////
@@ -359,10 +364,16 @@ namespace DXBStudio
             System.BitConverter.GetBytes(((ushort)Commands.Register)).CopyTo(bb, i);
             i = i + sizeof(ushort);
             ///////////////////////////
-            bb[i++] = 0x00; bb[i++] = 0x0C;//信息长度为12
+            System.BitConverter.GetBytes((UInt16)12).CopyTo(bb, i);
+            //bb[i++] = 0x00; bb[i++] = 0x05;//信息长度为12
+            i = i + 2;
             ///////////////////////////Terminal ID^^^^^^^^^^^^^^^
-            ASCIIEncoding.ASCII.GetBytes(_phone).CopyTo(bb, i);
-            i = i + 6;
+            for (int j = 0; j < 6; j++)
+            {
+                string s = _phone.Substring(2*j, 2);
+                bb[i++] = (byte)ushort.Parse(s);
+            }
+            //ASCIIEncoding.ASCII.GetBytes(_phone).CopyTo(bb, i);
             /////////////////////////////网络ID
             bb[i++] = netType;
             ////////////////////////////版本信息
@@ -371,7 +382,7 @@ namespace DXBStudio
             ///////////////////////////客户信息  暂时没有
             bb[i++] = 0x00; bb[i++] = 0x00;
             //协议体中从“信息序列号”到“信息内容”（包括“信息序列号”、“ 信息内容”）这部分数据的 CRC-ITU 值。
-            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 2 - bBegin.Length - bEnd.Length);
+            ushort ucrc = CRC.CRC16.CRC16_ccitt(bb, 2, minLen + 12 - bBegin.Length - bEnd.Length -2 );
             bb[i++] = CRC.CRC16.Lo(ucrc);
             bb[i++] = CRC.CRC16.Hi(ucrc);
             ////////////////////////////////////////////

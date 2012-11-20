@@ -14,7 +14,8 @@ namespace Terminal
         {
             InitializeComponent();
         }
-
+        private const string serverAddress = "127.0.0.1";
+        //private const string serverAddress = "server.battery110.com";
         private void Main_Load(object sender, EventArgs e)
         {
             initData();
@@ -26,7 +27,7 @@ namespace Terminal
             d = new Database();
             d.Error += new Database.error(d_Error);
 
-            Server s = new Server("127.0.0.1", 8888);
+            Server s = new Server(serverAddress, 8888);
 
             t = new Terminal(s);
 
@@ -39,32 +40,40 @@ namespace Terminal
             cbNetType.SelectedIndex = t.NetType;
             maskedTextBox1.Text = t.Version;
 
-            
 
+            t_ConnectState(t.ConState);
             t.ConnectState += new Terminal._ConnectState(t_ConnectState);
-
             t.Message += new Terminal._Message(t_Message);
         }
 
         void t_Message(string sMessage)
         {
-            textBox1.AppendText(DateTime.Now.ToLongTimeString()+":"+sMessage+"\r\n");
+            this.Invoke((EventHandler)delegate {
+                textBox1.AppendText(DateTime.Now.ToLongTimeString() + ":" + sMessage + "\r\n");
+            });
+            
         }
 
         void t_ConnectState(Terminal.State state)
         {
-            switch (state)
+            this.Invoke((EventHandler)delegate
             {
-                case Terminal.State.Connect: tsslConnectState.Text = "连接状态"; tspbRun.Enabled = true; break;
-                case Terminal.State.disConnect: tsslConnectState.Text = "断开状态"; tspbRun.Enabled = false; break;
-                case Terminal.State.Send: tsslConnectState.Text = "发送状态"; tspbRun.Enabled = true; break;
-                case Terminal.State.Recv: tsslConnectState.Text = "接收状态"; tspbRun.Enabled = true; break;
-            }
+                switch (state)
+                {
+                    case Terminal.State.Connect: tsslConnectState.Text = "连接状态"; tspbRun.Enabled = true; break;
+                    case Terminal.State.disConnect: tsslConnectState.Text = "断开状态"; tspbRun.Enabled = false; break;
+                    case Terminal.State.Send: tsslConnectState.Text = "发送状态"; tspbRun.Enabled = true; break;
+                    case Terminal.State.Recv: tsslConnectState.Text = "接收状态"; tspbRun.Enabled = true; break;
+                }
+            });
         }
 
         void d_Error(Exception e)
         {
-            tsslDatabase.Text = e.Message;
+            this.Invoke((EventHandler)delegate
+            {
+                tsslDatabase.Text = e.Message;
+            });
             //关闭连接，停止活动
             //add code
             
@@ -92,6 +101,7 @@ namespace Terminal
             if (t.ConState == Terminal.State.Connect)
             {
                 tbTerminalID.Text = t.Phone;
+                //测试，只发送一个。。。以后变成循环模式。。
                 if (!t.SendHand(checkBox1.Checked))
                 {
                     MessageBox.Show("发送不成功。");

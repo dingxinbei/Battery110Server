@@ -9,7 +9,7 @@ namespace DXBStudio
     {
         private System.Net.Sockets.TcpClient tc;
         private long LogId;
-
+        private NetworkStream ns;
         public Client(TcpClient tc, long LogId)
         {
             // TODO: Complete member initialization
@@ -19,13 +19,18 @@ namespace DXBStudio
         }
         public void AsynDo()
         {
-            NetworkStream ns = tc.GetStream();
+           
             try
             {
-                Packet p = new Packet(tc,ns, LogId);
-                ns.Close();
+                ns = tc.GetStream();
+                while (tc.Connected)
+                {
+                    Packet p = new Packet(tc, ns, LogId);
+                }
             }
-            catch { ns.Close(); }
+            catch {//错误不一定需要关闭ns
+                Close();
+            }
                         
         }
 
@@ -33,6 +38,7 @@ namespace DXBStudio
         {
             try
             {
+                ns.Close();
                 tc.Close();
             }
             catch { }

@@ -30,8 +30,10 @@ namespace Terminal
         {
             get { return BitConverter.ToString(_Version).Replace('-', '.'); }
             set {
-                string ss = value.Replace(".","");//.Split('.');
-                Encoding.ASCII.GetBytes(ss).CopyTo(_Version,0);
+                //string ss = value.Replace(".","");//.Split('.');
+                string[] ss = value.Split('.');
+                for (int i = 0; i<3; i++)
+                    _Version[i] = (byte)ushort.Parse(ss[i]);
             }
         }
         public uint TerminalNo
@@ -65,7 +67,7 @@ namespace Terminal
             Send = 2,//发送数据
             Recv =3//接受数据
         }
-        private bool bRecv;
+        private bool bRecv = true;
         private Server S;
         private System.Net.Sockets.TcpClient tc;
         private System.Net.Sockets.NetworkStream ns;
@@ -74,11 +76,12 @@ namespace Terminal
             S = s;
             try
             {
-                tc = new System.Net.Sockets.TcpClient(s.Address, s.Port);
-                tc.Connect(s.Address, s.Port);
+                tc = new System.Net.Sockets.TcpClient();
+                tc.Connect(s.Address,s.Port);
                 ns = tc.GetStream();
 
                 System.Threading.Thread th = new System.Threading.Thread(new System.Threading.ThreadStart(Recv));
+                th.Start();
 
                 ChangeState(State.Connect);
             }
@@ -96,6 +99,13 @@ namespace Terminal
             byte[] bb = new byte[Packet.maxLen-1];
             while (bRecv)
             {
+                if (!tc.Connected)
+                {
+                    System.Threading.Thread.Sleep(5000);//每5秒连接一次
+                    tc.Connect(S.Address, S.Port);
+                    ns = tc.GetStream();
+                    continue;
+                }
                 int iRe = ns.Read(bb,0,Packet.maxLen-1);
                 ChangeState(State.Recv);
                 if (iRe > Packet.minLen && iRe < Packet.maxLen)//包大小符合要求
@@ -128,7 +138,7 @@ namespace Terminal
                             ushort Command = System.BitConverter.ToUInt16(bCommand, 0);
                             //////////////////////////////////////
                             //信息内容长度
-                            int dataLen = System.BitConverter.ToInt16(bb, i);
+                            ushort dataLen = System.BitConverter.ToUInt16(bb, i);
                             i = i + 2;//2位
                             /////////////////////////////
                             //根据不同的协议号，返回不同的处理
@@ -137,18 +147,17 @@ namespace Terminal
                                 case (ushort)Packet.Commands.Register: ReponseRegister(bb,bTerminal,dataLen,i); break;
                                 case (ushort)Packet.Commands.Hand: ResponseHand(bb,bTerminal,dataLen,i); break;
                                 //不合理的 不可能存在的协议号
-                                default: return;
+                                default: break;
                             }
                             //录入数据库
-
-                            //接收处理完毕
-                            if (tc.Connected)
-                                ChangeState(State.Connect);
-                            else
-                                ChangeState(State.disConnect);
                         }
                     }
                 }
+                //接收处理完毕
+                if (tc.Connected)
+                    ChangeState(State.Connect);
+                else
+                    ChangeState(State.disConnect);
             }
         }
 
@@ -238,10 +247,13 @@ namespace Terminal
             if (tc.Connected)
             {
                 ChangeState(State.Send);
-                ns.Write(bb, 0, bb.Length);
-                ns.Flush();
-                ChangeState(State.Connect);
-                return true;
+                if (ns.CanWrite)
+                {
+                    ns.Write(bb, 0, bb.Length);
+                    ns.Flush();
+                    ChangeState(State.Connect);
+                    return true;
+                }
             }
             ChangeState(State.disConnect);
             return false;
@@ -261,7 +273,7 @@ namespace Terminal
             {
                 _phone = "01" + r.Next(10, 99).ToString() + r.Next(0,99999999).ToString().PadLeft(8,'0');
             }
-            byte[] bb = Packet.MakeTerminalRegisterPacket(_phone, 1);
+            byte[] bb = Packet.MakeTerminalRegisterPacket(_phone,NetType,_Version, 1);
 
             if (tc.Connected)
             {

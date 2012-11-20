@@ -51,20 +51,23 @@ namespace DXBStudio
                     cmd.Parameters.Add("@LogId", System.Data.SqlDbType.BigInt);
                     cmd.Parameters.Add("@Ip", System.Data.SqlDbType.VarChar);
                     cmd.Parameters.Add("@Port", System.Data.SqlDbType.Int);
-                    cmd.Parameters["@Ip"].Direction = ParameterDirection.Output;
-                    cmd.Parameters["@Port"].Direction = ParameterDirection.Output;
+                    cmd.Parameters["@Ip"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@Port"].Direction = ParameterDirection.InputOutput;
                     cmd.Parameters["@LogId"].Direction = ParameterDirection.Output;
                     cmd.Parameters["@Mac"].Value = Mac;
+                    cmd.Parameters["@Ip"].Value = _ip;
+                    cmd.Parameters["@Port"].Value = _port;
+
                     cmd.ExecuteNonQuery();
 
                     sc.Close();
-                    if (cmd.Parameters["@Ip"].Value != null)
+                    if (cmd.Parameters["@Ip"].Value != DBNull.Value)
                     {
                         _ip = cmd.Parameters["@Ip"].Value.ToString();
                     }
-                    if (cmd.Parameters["@Port"].Value != null)
+                    if (cmd.Parameters["@Port"].Value != DBNull.Value)
                     {
-                        _port = (int)cmd.Parameters["@Ip"].Value;
+                        _port = (int)cmd.Parameters["@Port"].Value;
                     }
                     //tsbStatus.Text = "数据库连接成功！";
                     return (long)(cmd.Parameters["@LogId"].Value);
@@ -154,7 +157,7 @@ namespace DXBStudio
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@data", SqlDbType.VarBinary);
                     cmd.Parameters.Add("@No", SqlDbType.Int);
-                    cmd.Parameters.Add("@Terminal", SqlDbType.Binary);
+                    cmd.Parameters.Add("@TerminalNo", SqlDbType.Binary);
                     cmd.Parameters.Add("@Command", SqlDbType.Binary);
                     cmd.Parameters.Add("@infoLen", SqlDbType.Int);
                     cmd.Parameters.Add("@infodata", SqlDbType.Binary);
@@ -165,7 +168,7 @@ namespace DXBStudio
                     cmd.Parameters["@Command"].Value = bCommand;
                     cmd.Parameters["@infoLen"].Value = dataLen;
                     byte[] bbb = new byte[dataLen];
-                    bb.CopyTo(bbb,i);
+                    System.Array.Copy(bb, i, bbb, 0, dataLen);
                     cmd.Parameters["@infodata"].Value = bbb;
                     cmd.Parameters["@LogId"].Value = LogId;
                     cmd.ExecuteNonQuery();
@@ -196,15 +199,15 @@ namespace DXBStudio
                     cmd.CommandText = "Register";
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@Phone", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@Type", SqlDbType.Bit);
-                    cmd.Parameters.Add("@Version", SqlDbType.VarChar);
+                    cmd.Parameters.Add("@CarNetType", SqlDbType.Bit);
+                    cmd.Parameters.Add("@RomVersion", SqlDbType.VarChar);
                     cmd.Parameters["@Phone"].Value = sphone;
-                    cmd.Parameters["@Type"].Value = bType;
-                    cmd.Parameters["@Version"].Value = sversion;
+                    cmd.Parameters["@CarNetType"].Value = bType;
+                    cmd.Parameters["@RomVersion"].Value = sversion;
                     cmd.Parameters.Add("@mac", SqlDbType.VarChar);
                     cmd.Parameters["@mac"].Value = mac;
 
-                    cmd.Parameters.Add("@TerminalNo", SqlDbType.Binary);
+                    cmd.Parameters.Add("@TerminalNo", SqlDbType.Binary,4);
                     cmd.Parameters.Add("@ReReg", SqlDbType.Bit);
                     cmd.Parameters["@TerminalNo"].Direction = ParameterDirection.Output;
                     cmd.Parameters["@ReReg"].Direction = ParameterDirection.Output;

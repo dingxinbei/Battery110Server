@@ -338,9 +338,11 @@
             // 
             // pbListen
             // 
+            this.pbListen.Enabled = false;
             this.pbListen.Location = new System.Drawing.Point(343, 65);
             this.pbListen.Name = "pbListen";
             this.pbListen.Size = new System.Drawing.Size(231, 23);
+            this.pbListen.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.pbListen.TabIndex = 4;
             // 
             // tbPort
@@ -533,6 +535,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "Main";
             this.Text = "Battery Server";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.Load += new System.EventHandler(this.Main_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

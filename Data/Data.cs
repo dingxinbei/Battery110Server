@@ -133,8 +133,22 @@ namespace DXBStudio
             DataTable dt = DBHelp.GetTerminalsSetup(sMac);
             foreach (DataRow dr in dt.Rows)
             {
-                lTerminals.Add(new Terminal((byte[])dr[1], (bool)dr[2], (string)dr[3], (string)dr[4], (int)dr[5], (Int64)dr[6], (DateTime)dr[7]));
+                if (dr[5] == DBNull.Value)
+                    dr[5] = 0;
+                AppTerminal(new Terminal((byte[])dr[1], (bool)dr[2], (string)dr[3], (string)dr[4], (int)dr[5], (Int64)dr[6], (DateTime)dr[7]));
             }
+        }
+        public static void AppTerminal(Terminal tt)
+        {
+            foreach (Terminal t in lTerminals)
+            {
+                if (t.Id == tt.Id)
+                {
+                    tt.Close();
+                    return;
+                }
+            }
+            lTerminals.Add(tt);
         }
         public static void ReleaseALL()
         {

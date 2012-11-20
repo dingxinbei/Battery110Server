@@ -37,7 +37,7 @@ namespace Battery110Server
                     checkBox2.Checked = true;
                 tbPort.Text = bt.Port.ToString();
 
-                pbDatabase.Style = ProgressBarStyle.Continuous;
+                pbDatabase.Style = ProgressBarStyle.Marquee;
 
                 DXBStudio.Terminal.InitData(DXBStudio.BTServer.Mac);
                 ////////////////////////////////////////////
@@ -46,12 +46,22 @@ namespace Battery110Server
                 {
                     AppRow(dataGridView1,t);
                 }
-
-                bt.Open();
+                AsynOpenListening();
             }
             catch (Exception e){
                 MessageBox.Show(e.Message);
             }
+        }
+
+        private void AsynOpenListening()
+        {
+            System.Threading.Thread th = new System.Threading.Thread(new System.Threading.ThreadStart(bt.Open));
+            th.Start();
+
+            if (bt.State == 1)
+                pbListen.Enabled = true;
+            else
+                pbListen.Enabled = false;
         }
         
         public void AppRow(DataGridView dataGridView1, DXBStudio.Terminal t)
@@ -118,7 +128,7 @@ namespace Battery110Server
                         bt.Close();
 
                         bt = new DXBStudio.BTServer(tbIpAddress.Text.Trim(),int.Parse(tbPort.Text));
-                        bt.Open();
+                        AsynOpenListening();
                     }
                     else
                         MessageBox.Show("没有变化不修改！");
@@ -164,6 +174,12 @@ namespace Battery110Server
                     AppRow(dataGridView1, t);
                 }
             }
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            DXBStudio.Terminal.ReleaseALL();
+            bt.Close();
         }
 
     }

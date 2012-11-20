@@ -80,10 +80,14 @@ namespace DXBStudio
                 _state = 1;
                 while (!isclose)
                 {
-                    TcpClient tc = tl.AcceptTcpClient();
-                    Client c = new Client(tc,LogId);
-                    System.Threading.Thread th = new System.Threading.Thread(new System.Threading.ThreadStart(c.AsynDo));
-                    th.Start();
+                    try
+                    {
+                        TcpClient tc = tl.AcceptTcpClient();
+                        Client c = new Client(tc, LogId);
+                        System.Threading.Thread th = new System.Threading.Thread(new System.Threading.ThreadStart(c.AsynDo));
+                        th.Start();
+                    }
+                    catch { }
                 }
 
                 tl.Stop();

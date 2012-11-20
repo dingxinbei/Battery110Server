@@ -14,7 +14,7 @@ namespace DXBStudio
             NetworkInterface[] nii = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface ni in nii)
             {
-                ss.Add(ni.GetPhysicalAddress().ToString());
+                ss.Add( BitConverter.ToString(ni.GetPhysicalAddress().GetAddressBytes()));
             }
             return ss.ToArray();
         }

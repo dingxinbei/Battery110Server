@@ -97,3 +97,39 @@ BEGIN
 	insert into dbo.PackData values (@id,@No,@TerminalNo,@Command,@infoLen,@infodata,GETDATE())
 END
 GO
+--------------------------------4--------------------------------------
+USE [Battery110]
+GO
+/****** Object:  StoredProcedure [dbo].[Register]    Script Date: 11/20/2012 14:54:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Dxb>
+-- Create date: <2012,11,14>
+-- Description:	<Description,,注册，>
+-- =============================================
+CREATE PROCEDURE [dbo].[Register] 
+	-- Add the parameters for the stored procedure here
+	@mac varchar(20),@Phone varchar(20),@CarNetType bit,@RomVersion varchar(10),@TerminalNo binary(4) output,@ReReg bit output
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	declare @Have int;
+	select @Have = COUNT(*) from dbo.TerminalSetupInfo where Phone = @Phone;
+	if @Have > 0 
+	begin
+		select @TerminalNo = TerminalNo from dbo.TerminalSetupInfo where Phone = @Phone;
+		set @ReReg = 1;
+	end 
+	else
+	begin
+		insert into dbo.TerminalSetupInfo values (null,@CarNetType,@RomVersion,@Phone,null,0,getdate(),@mac,0)
+		set @TerminalNo = CONVERT(binary(4),CONVERT(bigint,SCOPE_IDENTITY()));
+		update dbo.TerminalSetupInfo set TerminalNo = @TerminalNo  where Phone = @Phone;
+		set @ReReg = 0;
+	end 
+END
