@@ -83,10 +83,13 @@ namespace Battery110Server
         void t_RecvData(DXBStudio.Terminal sender)
         {
             if (sender.State == DXBStudio.Terminal.ConnectState.Normal)
+            {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Green;
+                dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "连接";
+            }
             if (sender.LastRecv != null)
             {
-                dataGridView1.Rows[sender.RowIndex].Cells[2].Value = (sender.NowRecv - sender.LastRecv).Milliseconds;
+                dataGridView1.Rows[sender.RowIndex].Cells[3].Value = (sender.NowRecv - sender.LastRecv).TotalSeconds;
             }
         }
 
@@ -96,15 +99,17 @@ namespace Battery110Server
             if (cs == DXBStudio.Terminal.ConnectState.Normal)
             {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Green;
+                dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "连接";
                 return;
             }
             if (cs == DXBStudio.Terminal.ConnectState.Disconnect)
             {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Yellow;
+                dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "未连接";
                 return;
             }
-            
-            
+
+            dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "严重问题";
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Red;
                 return;
         }
@@ -174,12 +179,14 @@ namespace Battery110Server
                     AppRow(dataGridView1, t);
                 }
             }
+            lRegNums.Text = DXBStudio.Terminal.lTerminals.Count.ToString();
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
             DXBStudio.Terminal.ReleaseALL();
             bt.Close();
+            Application.Exit();
         }
 
     }

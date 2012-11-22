@@ -46,6 +46,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.maskedTextBox1 = new System.Windows.Forms.MaskedTextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cbNetType = new System.Windows.Forms.ComboBox();
             this.bReg = new System.Windows.Forms.Button();
             this.tbRegId = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -53,9 +56,6 @@
             this.tbRegNo = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.cbNetType = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.maskedTextBox1 = new System.Windows.Forms.MaskedTextBox();
             this.statusStrip1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -247,6 +247,36 @@
             this.tabPage2.Text = "注册";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // maskedTextBox1
+            // 
+            this.maskedTextBox1.Location = new System.Drawing.Point(442, 9);
+            this.maskedTextBox1.Mask = "00.00.00";
+            this.maskedTextBox1.Name = "maskedTextBox1";
+            this.maskedTextBox1.Size = new System.Drawing.Size(100, 21);
+            this.maskedTextBox1.TabIndex = 11;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(370, 13);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 12);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "硬件版本号";
+            // 
+            // cbNetType
+            // 
+            this.cbNetType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbNetType.FormattingEnabled = true;
+            this.cbNetType.Items.AddRange(new object[] {
+            "CAN网络",
+            "RS485"});
+            this.cbNetType.Location = new System.Drawing.Point(9, 38);
+            this.cbNetType.Name = "cbNetType";
+            this.cbNetType.Size = new System.Drawing.Size(107, 20);
+            this.cbNetType.TabIndex = 9;
+            this.cbNetType.SelectedIndexChanged += new System.EventHandler(this.cbNetType_SelectedIndexChanged);
+            // 
             // bReg
             // 
             this.bReg.Location = new System.Drawing.Point(467, 42);
@@ -306,38 +336,9 @@
             this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox1.Size = new System.Drawing.Size(576, 149);
             this.textBox1.TabIndex = 0;
-            // 
-            // cbNetType
-            // 
-            this.cbNetType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbNetType.FormattingEnabled = true;
-            this.cbNetType.Items.AddRange(new object[] {
-            "CAN网络",
-            "RS485"});
-            this.cbNetType.Location = new System.Drawing.Point(9, 38);
-            this.cbNetType.Name = "cbNetType";
-            this.cbNetType.Size = new System.Drawing.Size(107, 20);
-            this.cbNetType.TabIndex = 9;
-            this.cbNetType.SelectedIndexChanged += new System.EventHandler(this.cbNetType_SelectedIndexChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(370, 13);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(65, 12);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "硬件版本号";
-            // 
-            // maskedTextBox1
-            // 
-            this.maskedTextBox1.Location = new System.Drawing.Point(442, 9);
-            this.maskedTextBox1.Mask = "00.00.00";
-            this.maskedTextBox1.Name = "maskedTextBox1";
-            this.maskedTextBox1.Size = new System.Drawing.Size(100, 21);
-            this.maskedTextBox1.TabIndex = 11;
             // 
             // Main
             // 
@@ -348,6 +349,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Name = "Main";
             this.Text = "Virtual Terminal";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.Load += new System.EventHandler(this.Main_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

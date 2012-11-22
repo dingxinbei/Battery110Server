@@ -21,10 +21,10 @@ namespace DXBStudio
         /// /////////////////////////////////////////////////
         /// </summary>
         public static List<Terminal> lTerminals = new List<Terminal>();
-        private uint _Id;
+        private UInt32 _Id;
         public  int RowIndex = -1;
         
-        public uint Id
+        public UInt32 Id
         {
             get { return _Id; }
         }

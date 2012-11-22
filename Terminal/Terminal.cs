@@ -12,7 +12,7 @@ namespace Terminal
         public delegate void _ConnectState(State state);
         public event _ConnectState ConnectState;
         public bool bRandomTermanlNo = false;
-        private uint _TerminalNo = 0xFFFFFFFF;
+        private UInt32 _TerminalNo = 0xFFFFFFFF;
         private string _phone = "018907130240";
         public string Phone
         {
@@ -36,13 +36,14 @@ namespace Terminal
                     _Version[i] = (byte)ushort.Parse(ss[i]);
             }
         }
-        public uint TerminalNo
+        public UInt32 TerminalNo
         {
             get { return _TerminalNo; }
+            set { _TerminalNo = value; }
         }
         private void SetTerminalNo(byte[] bb)
         {
-            _TerminalNo = System.BitConverter.ToUInt16(bb,0);
+            _TerminalNo = System.BitConverter.ToUInt32(bb,0);
         }
         private void ChangeState(State s)
         {
@@ -106,8 +107,14 @@ namespace Terminal
                     ns = tc.GetStream();
                     continue;
                 }
-                int iRe = ns.Read(bb,0,Packet.maxLen-1);
+                int iRe = 0;
+                try//防止突然中断 导致 错误
+                {
+                    iRe = ns.Read(bb, 0, Packet.maxLen - 1);
+                }
+                catch { }
                 ChangeState(State.Recv);
+                #region ////////
                 if (iRe > Packet.minLen && iRe < Packet.maxLen)//包大小符合要求
                 {
                     if (bb[0] == Packet.bBegin[0] && bb[1] == Packet.bBegin[1] && bb[iRe - 2] == Packet.bEnd[0] && bb[iRe - 1] == Packet.bEnd[1]) //包初始结构符合要求
@@ -154,6 +161,7 @@ namespace Terminal
                     }
                 }
                 //接收处理完毕
+                #endregion
                 if (tc.Connected)
                     ChangeState(State.Connect);
                 else
@@ -178,7 +186,7 @@ namespace Terminal
             }
             else
             {
-                if (System.BitConverter.ToUInt16(bTerminalNo, 0) == TerminalNo)
+                if (System.BitConverter.ToUInt32(bTerminalNo, 0) == TerminalNo)
                 {
                     s = "固定终端号模式:" + BitConverter.ToString(bTerminalNo) + "；收到握手包；状态 " + s;
                 }
@@ -216,11 +224,11 @@ namespace Terminal
             {
                 if (System.BitConverter.ToUInt16(bTerminalNo, 0) == TerminalNo)
                 {
-                    s = "固定终端号模式:" + BitConverter.ToString(bTerminalNo) + "；收到注册包；第一次注册；状态 " + s;
+                    s = "固定终端号模式:" + BitConverter.ToString(bTerminalNo) + "；收到注册包；已注册过；状态 " + s;
                 }
                 else
                 {
-                    s = "固定终端号模式:" + BitConverter.ToString(bTerminalNo) + "；收到注册包；已注册过；状态 " + s;
+                    s = "固定终端号模式:" + BitConverter.ToString(bTerminalNo) + "；收到注册包；第一次注册；状态 " + s;
                 }
             }
             _TerminalNo = System.BitConverter.ToUInt16(bb, i);

@@ -107,7 +107,6 @@ namespace DXBStudio
             }
             catch { }
             _state = 0;
-            
         }
     }
 }
