@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net.Sockets;
 using System.Data;
+using System.ComponentModel;
 
 namespace DXBStudio
 {
@@ -23,7 +24,8 @@ namespace DXBStudio
         public static List<Terminal> lTerminals = new List<Terminal>();
         private UInt32 _Id;
         public  int RowIndex = -1;
-        
+        [Browsable(true)]
+        [Description("连接终端的ID"),DisplayName("终端ID")]
         public UInt32 Id
         {
             get { return _Id; }
@@ -31,6 +33,8 @@ namespace DXBStudio
         private System.Threading.Thread th;
         //状态若为00，表示连接正常。若为02，则表示终端未注册。若为03，则表示连接已断开。
         private ConnectState _state;
+        [Browsable(true)]
+        [Description("连接状态"),DisplayName("连接状态")]
         public ConnectState State
         {
             get { return _state; }
@@ -42,41 +46,58 @@ namespace DXBStudio
             Disconnect = 0x03
         }
         private DateTime _LastRecv;
+        [Browsable(false)]
+        [Description("上次接收到数据的时间"), DisplayName("接收时间")]
         public DateTime LastRecv
         {
             get { return _LastRecv; }
         }
         private DateTime _NowRecv;
+        [Browsable(true)]
+        [Description("当前接收到数据的时间"), DisplayName("接收时间")]
         public DateTime NowRecv {
             get { return _NowRecv; }
         }
         private TcpClient tc;
         private string _phone;
+        [Browsable(true)]
+        [Description("终端唯一ID，为一手机号码"), DisplayName("终端号")]
         public string Phone
         {
             get { return _phone; }
         }
         private bool _CarNetType;
+        [Browsable(true)]
+        [Description("网络类型，true：RS485，false：CAN网络"), DisplayName("网络类型")]
         public bool CarNetType
         {
             get { return _CarNetType; }
         }
         private string _romversion;
+        [Browsable(true)]
+        [Description("终端固件版本号"), DisplayName("固件版本")]
         public string RomVersion
         {
             get { return _romversion; }
         }
         private int _gprsPeriod;
+        [Browsable(true)]
+        [Description("每次刷新的时间s"), DisplayName("跟新周期")]
         public int GPRSPeriod
         {
             get { return _gprsPeriod; }
+            set { _gprsPeriod = value; }
         }
         private Int64 _Maker;
+        [Browsable(true)]
+        [Description("输入者ID"), DisplayName("用户ID")]
         public Int64 MakerId
         {
             get { return _Maker; }
         }
         private DateTime _RegTime;
+        [Browsable(true)]
+        [Description("注册时间"), DisplayName("注册时间")]
         public DateTime RegisterTime
         {
             get { return _RegTime; }

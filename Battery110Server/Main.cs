@@ -90,6 +90,7 @@ namespace Battery110Server
             if (sender.LastRecv != null)
             {
                 dataGridView1.Rows[sender.RowIndex].Cells[3].Value = (sender.NowRecv - sender.LastRecv).TotalSeconds;
+                sender.GPRSPeriod = (int)dataGridView1.Rows[sender.RowIndex].Cells[3].Value;
             }
         }
 
@@ -100,23 +101,26 @@ namespace Battery110Server
             {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Green;
                 dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "连接";
+                lConNums.Text = (int.Parse(lConNums.Text) + 1).ToString();
                 return;
             }
             if (cs == DXBStudio.Terminal.ConnectState.Disconnect)
             {
                 dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Yellow;
                 dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "未连接";
+                lConNums.Text = (int.Parse(lConNums.Text) - 1).ToString();
                 return;
             }
 
             dataGridView1.Rows[sender.RowIndex].Cells[2].Value = "严重问题";
-                dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Red;
-                return;
+            dataGridView1.Rows[sender.RowIndex].DefaultCellStyle.BackColor = Color.Red;
+            lConNums.Text = (int.Parse(lConNums.Text) - 1).ToString();
+            return;
         }
 
         private void bDatabaseReset_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("勿轻易修改此配置，请联系管理员！");
         }
 
         private void bActive_Click(object sender, EventArgs e)
@@ -187,6 +191,11 @@ namespace Battery110Server
             DXBStudio.Terminal.ReleaseALL();
             bt.Close();
             Application.Exit();
+        }
+
+        private void bDataLog_Click(object sender, EventArgs e)
+        {
+            //展示数据记录
         }
 
     }
