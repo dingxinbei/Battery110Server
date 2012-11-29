@@ -225,5 +225,60 @@ namespace DXBStudio
 
             return false;
         }
+
+        public static DataTable GetTerminalData(uint p,DateTime begintime,DateTime endtime)
+        {
+            DataTable dt = new DataTable();
+            byte[] bbId = BitConverter.GetBytes(p);
+            try {
+                using (System.Data.SqlClient.SqlConnection sc = DBHelp.CreateLogConnect())
+                {
+                    sc.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand();
+                    cmd.Connection = sc;
+                    cmd.Parameters.Add("@tNo", SqlDbType.Binary, 4);
+                    cmd.Parameters["@tNo"].Value = bbId;
+                    cmd.Parameters.Add("@begintime", SqlDbType.DateTime);
+                    cmd.Parameters.Add("@endtime", SqlDbType.DateTime);
+                    cmd.Parameters["@begintime"].Value = begintime;
+                    cmd.Parameters["@endtime"].Value = endtime;
+                    cmd.CommandText = "select No as 包序号 ,TerminalNo as 终端号,ProNo as 协议号,datalen as 数据长度,data as 数据 , intime as 时间 from dbo.PackData where TerminalNo = @tNo and intime>=@beginTime and intime<=@endtime order by intime desc";
+                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                    DataTable dtt = new DataTable();
+                    sda.Fill(dtt);
+                    if (dtt != null)
+                    {
+                        dt.Columns.Add("序号");
+                        foreach(DataColumn dc in dtt.Columns)
+                            dt.Columns.Add(dc.ColumnName);
+                        
+                        foreach (DataRow dr in dtt.Rows)
+                        {
+                            dt.Rows.Add(dt.NewRow());
+                            dt.Rows[dt.Rows.Count - 1][0] = dt.Rows.Count;
+                            for (int i = 0; i < dtt.Columns.Count; i++)
+                            {
+                                if (dr[i].GetType() == typeof(byte[]))
+                                {
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.Append("0X");
+                                    foreach (byte b in (byte[])dr[i])
+                                    {
+                                        sb.AppendFormat("{0:X2}", b);
+                                    }
+                                    dt.Rows[dt.Rows.Count - 1][i+1] = sb.ToString();
+                                }
+                                else
+                                    dt.Rows[dt.Rows.Count - 1][i+1] = dr[i];
+                            }
+
+                        }
+                    }
+                    sc.Close();
+                }
+            }
+            catch { }
+            return dt;
+        }
     }
 }

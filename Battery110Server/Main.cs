@@ -192,10 +192,28 @@ namespace Battery110Server
             bt.Close();
             Application.Exit();
         }
-
+        private DataShow ds;
         private void bDataLog_Click(object sender, EventArgs e)
         {
             //展示数据记录
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                if (ds == null)
+                {
+                    ds = new DataShow((DXBStudio.Terminal)dataGridView1.SelectedRows[0].Tag);
+                    ds.Show();
+                }
+                else
+                {
+                    ds.setTerminal((DXBStudio.Terminal)dataGridView1.SelectedRows[0].Tag);
+                    ds.Show();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("选中的行不正确！？");
+            }
         }
 
     }
