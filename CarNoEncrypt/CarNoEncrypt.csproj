@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A2DEDFD9-22F4-470F-92B5-C379D456E0E1}</ProjectGuid>
+    <ProjectGuid>{75734C03-A6A2-466E-8F66-EF6D448CB6C7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Battery110Server</RootNamespace>
-    <AssemblyName>Battery110Server</AssemblyName>
+    <RootNamespace>CarNoEncrypt</RootNamespace>
+    <AssemblyName>CarNoEncrypt</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,7 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevComponents.DotNetBar2, Version=10.5.0.3, Culture=neutral, PublicKeyToken=c39c3242a43eee2b, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -42,34 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CanSet.cs">
+    <Compile Include="DxbEncrypt.cs" />
+    <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CanSet.Designer.cs">
-      <DependentUpon>CanSet.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DataShow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DataShow.Designer.cs">
-      <DependentUpon>DataShow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Main.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
+    <Compile Include="main.Designer.cs">
+      <DependentUpon>main.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CanSet.resx">
-      <DependentUpon>CanSet.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DataShow.resx">
-      <DependentUpon>DataShow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="main.resx">
+      <DependentUpon>main.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -89,16 +71,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Data\Data.csproj">
-      <Project>{7BC73C0C-0A89-4986-B61C-C16C7E36550D}</Project>
-      <Name>Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DBHelp\DBHelp.csproj">
-      <Project>{16A14F52-A577-49A3-B1A4-E8687827DDC5}</Project>
-      <Name>DBHelp</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -184,6 +184,7 @@ namespace Battery110Server
                 }
             }
             lRegNums.Text = DXBStudio.Terminal.lTerminals.Count.ToString();
+
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
@@ -207,6 +208,31 @@ namespace Battery110Server
                 {
                     ds.setTerminal((DXBStudio.Terminal)dataGridView1.SelectedRows[0].Tag);
                     ds.Show();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("选中的行不正确！？");
+            }
+        }
+        private CanSet dSet;
+        private void bCanSet_Click(object sender, EventArgs e)
+        {
+            //每次只设置一个 can信息，协议号 21  
+            // CAN 数据上报 00 20
+            // CAN 数据下传 00 21
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                if (dSet == null)
+                {
+                    dSet = new CanSet((DXBStudio.Terminal)dataGridView1.SelectedRows[0].Tag);
+                    dSet.Show();
+                }
+                else
+                {
+                    dSet.setTerminal((DXBStudio.Terminal)dataGridView1.SelectedRows[0].Tag);
+                    dSet.Show();
                 }
 
             }
